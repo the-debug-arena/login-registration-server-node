@@ -30,7 +30,7 @@ require("./userDetails");
 
 const User = mongoose.model("UserInfo");
 app.post("/register", async (req, res) => {
-  const { fname, lname, email, password } = req.body;
+  const { fname, lname, email, password, userType } = req.body;
 
   const encryptedPassword = await bcrypt.hash(password, 10);
   try {
@@ -44,6 +44,7 @@ app.post("/register", async (req, res) => {
       lname,
       email,
       password: encryptedPassword,
+      userType,
     });
     res.send({ status: "ok" });
   } catch (error) {
@@ -60,7 +61,7 @@ app.post("/login-user", async (req, res) => {
   }
   if (await bcrypt.compare(password, user.password)) {
     const token = jwt.sign({ email: user.email }, JWT_SECRET, {
-      expiresIn: 10,
+      expiresIn: "15m",
     });
 
     if (res.status(201)) {
