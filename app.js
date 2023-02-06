@@ -61,7 +61,7 @@ app.post("/login-user", async (req, res) => {
   }
   if (await bcrypt.compare(password, user.password)) {
     const token = jwt.sign({ email: user.email }, JWT_SECRET, {
-      expiresIn: "15m",
+      expiresIn: "10s",
     });
 
     if (res.status(201)) {
@@ -184,5 +184,26 @@ app.post("/reset-password/:id/:token", async (req, res) => {
   } catch (error) {
     console.log(error);
     res.json({ status: "Something Went Wrong" });
+  }
+});
+
+app.get("/getAllUser", async (req, res) => {
+  try {
+    const allUser = await User.find({});
+    res.send({ status: "ok", data: allUser });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.post("/deleteUser", async (req, res) => {
+  const { userid } = req.body;
+  try {
+    User.deleteOne({ _id: userid }, function (err, res) {
+      console.log(err);
+    });
+    res.send({ status: "Ok", data: "Deleted" });
+  } catch (error) {
+    console.log(error);
   }
 });
